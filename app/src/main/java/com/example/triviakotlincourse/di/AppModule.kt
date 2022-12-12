@@ -1,6 +1,7 @@
 package com.example.triviakotlincourse.di
 
 import com.example.triviakotlincourse.network.QuestionsAPI
+import com.example.triviakotlincourse.repository.QuestionRepository
 import com.example.triviakotlincourse.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -20,4 +21,8 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(QuestionsAPI::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideQuestionRepository(api: QuestionsAPI) = QuestionRepository(api)
 }

@@ -1,4 +1,33 @@
 package com.example.triviakotlincourse.screen
 
-class QuestionsViewModel {
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.triviakotlincourse.data.DataOrException
+import com.example.triviakotlincourse.model.QuestionItem
+import com.example.triviakotlincourse.repository.QuestionRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class QuestionsViewModel @Inject constructor(private val repository: QuestionRepository) :
+    ViewModel() {
+    private val data: MutableState<DataOrException<ArrayList<QuestionItem>, Boolean, Exception>> =
+        mutableStateOf(DataOrException(null, true, Exception("")))
+
+    init {
+        getAllQuestions()
+    }
+
+    private fun getAllQuestions() {
+        viewModelScope.launch {
+            data.value.loading = true
+            data.value = repository.getAllQuestions()
+            if (data.value.data.toString().isNotEmpty()) {
+                data.value.loading = false
+            }
+        }
+    }
 }
